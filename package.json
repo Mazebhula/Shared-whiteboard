@@ -1,0 +1,22 @@
+{
+  "name": "whiteboard-app",
+  "version": "1.0.0",
+  "description": "A real-time collaborative web-based whiteboard application.",
+  "main": "src/server/app.js",
+  "scripts": {
+    "start": "node src/server/app.js",
+    "client": "live-server src/client",
+    "dev": "concurrently \"npm run start\" \"npm run client\""
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^5.10.9",
+    "socket.io": "^4.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "live-server": "^1.2.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
