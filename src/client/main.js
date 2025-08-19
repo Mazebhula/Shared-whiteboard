@@ -10,6 +10,31 @@ canvas.height = window.innerHeight;
 let drawing = false;
 let current = { x: 0, y: 0 };
 
+// Get room ID from URL or generate a random one
+let roomId = new URLSearchParams(window.location.search).get('room');
+if (!roomId) {
+    roomId = Math.random().toString(36).substring(2, 15);
+    // Update URL with room ID without reloading the page
+    window.history.pushState({ roomId }, '', `?room=${roomId}`);
+}
+
+// Join the room
+socket.emit('join-room', roomId);
+
+// Display room info
+const roomInfo = document.createElement('div');
+roomInfo.className = 'room-info';
+roomInfo.innerHTML = `Room: ${roomId} <button id="copy-link">Copy Link</button>`;
+document.body.appendChild(roomInfo);
+
+// Copy link functionality
+document.getElementById('copy-link').addEventListener('click', () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Link copied to clipboard! Share it with others to collaborate.');
+    });
+});
+
 // Start drawing
 canvas.addEventListener('mousedown', (e) => {
     drawing = true;
@@ -49,4 +74,11 @@ function draw(x, y, newX, newY) {
 // Listen for drawing events from other clients
 socket.on('drawing', (data) => {
     draw(data.x, data.y, data.newX, data.newY);
+});
+
+// Handle drawing history when joining a room
+socket.on('drawing-history', (history) => {
+    history.forEach(data => {
+        draw(data.x, data.y, data.newX, data.newY);
+    });
 });
